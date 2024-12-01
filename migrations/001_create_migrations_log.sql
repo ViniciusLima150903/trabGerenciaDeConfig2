@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS migrations_log (
+    id SERIAL PRIMARY KEY,
+    script_name TEXT NOT NULL UNIQUE,
+    executed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
