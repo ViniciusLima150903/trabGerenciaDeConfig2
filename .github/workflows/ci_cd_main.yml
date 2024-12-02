@@ -36,3 +36,4 @@ jobs:
         done
       env:
         DATABASE_URL_MAIN: ${{ secrets.DATABASE_URL_MAIN }}
+        PGPASSWORD: ${{ secrets.DATABASE_PASSWORD_MAIN }}

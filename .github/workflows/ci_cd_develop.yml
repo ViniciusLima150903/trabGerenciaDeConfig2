@@ -37,3 +37,4 @@ jobs:
         done
       env:
         DATABASE_URL_DEVELOP: ${{ secrets.DATABASE_URL_DEVELOP }}
+        PGPASSWORD: ${{ secrets.DATABASE_URL_PASSWORD_DEVELOP }}
