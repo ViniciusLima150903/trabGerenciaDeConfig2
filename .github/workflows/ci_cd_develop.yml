@@ -1,0 +1,40 @@
+name: CI/CD Develop
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v3
+
+    - name: Deploy para Vercel (develop)
+      uses: amondnet/vercel-action@v20
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_DEVELOP }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+
+    - name: Atualizar banco de dados (develop)
+      run: |
+        echo "Iniciando migrações no banco develop..."
+        for script in $(ls migrations/*.sql); do
+          if ! psql $DATABASE_URL_DEVELOP -c "SELECT script_name FROM migrations_log WHERE script_name='$(basename $script)'" | grep "$(basename $script)"; then
+            echo "Executando $(basename $script)..."
+            psql $DATABASE_URL_DEVELOP -f $script
+            psql $DATABASE_URL_DEVELOP -c "INSERT INTO migrations_log (script_name) VALUES ('$(basename $script)');"
+          else
+            echo "Script $(basename $script) já foi executado."
+          fi
+        done
+      env:
+        DATABASE_URL_DEVELOP: ${{ secrets.DATABASE_URL_DEVELOP }}
+        PGPASSWORD: ${{ secrets.DATABASE_URL_PASSWORD_DEVELOP }}

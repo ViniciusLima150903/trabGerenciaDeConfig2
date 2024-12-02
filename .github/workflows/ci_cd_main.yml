@@ -1,0 +1,39 @@
+name: CI/CD Main
+
+on:
+  schedule:
+    - cron: '0 21 * * *'  # Atualização diária às 21:00
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v3
+
+    - name: Deploy para Vercel (main)
+      uses: amondnet/vercel-action@v20
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_MAIN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+
+    - name: Atualizar banco de dados (main)
+      run: |
+        echo "Iniciando migrações no banco main..."
+        for script in $(ls migrations/*.sql); do
+          if ! psql $DATABASE_URL_MAIN -c "SELECT script_name FROM migrations_log WHERE script_name='$(basename $script)'" | grep "$(basename $script)"; then
+            echo "Executando $(basename $script)..."
+            psql $DATABASE_URL_MAIN -f $script
+            psql $DATABASE_URL_MAIN -c "INSERT INTO migrations_log (script_name) VALUES ('$(basename $script)');"
+          else
+            echo "Script $(basename $script) já foi executado."
+          fi
+        done
+      env:
+        DATABASE_URL_MAIN: ${{ secrets.DATABASE_URL_MAIN }}
+        PGPASSWORD: ${{ secrets.DATABASE_PASSWORD_MAIN }}
