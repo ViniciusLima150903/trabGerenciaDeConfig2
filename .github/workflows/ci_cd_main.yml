@@ -2,7 +2,7 @@ name: CI/CD Main
 
 on:
   schedule:
-    - cron: '0 21 * * *'  # Atualização diária às 21:00
+    - cron: '0 0 * * *'  # Atualização diária às 21:00
   pull_request:
     branches:
       - main
