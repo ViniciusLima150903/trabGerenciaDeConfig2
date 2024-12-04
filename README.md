@@ -13,7 +13,7 @@ O projeto contém os seguintes componentes principais:
 ## Requisitos
 
 - **GitHub Actions** para orquestrar o CI/CD.
-- **Azure Static Web Apps** para hospedar as páginas HTML.
+- **Vercel** para hospedar as páginas HTML.
 - **Supabase** para gerenciar os bancos de dados PostgreSQL.
 
 ## Configuração dos Branches
@@ -36,7 +36,7 @@ Utilizamos o Supabase PostgreSQL para gerenciar os bancos de dados. As migraçõ
 
 ### 2. Hospedagem do Sistema
 
-O arquivo `index.html` é hospedado usando Azure Static Web Apps. Cada branch (`develop` e `main`) possui seu próprio site independente:
+O arquivo `index.html` é hospedado usando a Vercel. Cada branch (`develop` e `main`) possui seu próprio site independente:
 
 - **Ambiente de Desenvolvimento**: Hospeda o site gerado a partir de `develop`.
 - **Ambiente de Produção**: Hospeda o site gerado a partir de `main`.
@@ -71,11 +71,11 @@ Os workflows estão definidos no diretório `.github/workflows/`:
    - Configure as URLs de conexão e credenciais no GitHub Actions Secrets.
 
 2. **Hospedagem**:
-   - Configure dois aplicativos no Azure Static Web Apps (um para cada branch).
+   - Configure dois projetos na Vercel (um para cada branch).
    - Atualize as URLs no repositório, se necessário.
 
 3. **Workflows**:
-   - Insira as credenciais do banco e do Azure nos Secrets do repositório no GitHub.
+   - Insira as credenciais do banco e da Vercel nos Secrets do repositório no GitHub.
    - Ajuste os horários ou condições dos triggers, se necessário.
 
 ## Estrutura do Repositório
